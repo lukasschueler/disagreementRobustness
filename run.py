@@ -176,12 +176,13 @@ def make_env_all_params(rank, add_monitor, args):
         env = gym.make(args['env'])
         
         time = datetime.datetime.now().strftime("-%Y-%m-%d-%H-%M-%S-%f")
-        from pathlib import Path
-        dataPath = "./disagreeData/ENV" + time
-        Path(dataPath).mkdir(parents=True, exist_ok=True)
-        env = EnvMonitor(env, dataPath)
+        # from pathlib import Path
+        # dataPath = "./disagreeData/ENV" + time
+        # Path(dataPath).mkdir(parents=True, exist_ok=True)
+        # env = EnvMonitor(env, dataPath)
         
-        env = VideoMonitor(env, "./disagreeVideo/VID" + time , video_callable = lambda episode_id: episode_id%1000000)
+        env = VideoMonitor(env, "./disagreeVideo/VID" + time)
+        # , video_callable = lambda episode_id: episode_id%1000000)
         env = ImgObsWrapper(RGBImgPartialObsWrapper(env))
     
     # if add_monitor:
@@ -272,7 +273,7 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
     
-    wandb.init(project="thesis", group = "Exploration_by_Disagreement", entity = "lukischueler", name ="test2", config = args)
+    wandb.init(project="thesis", group = "Exploration_by_Disagreement", entity = "lukischueler", name ="test2", config = args, monitor_gym = True)
     
 
     start_experiment(**args.__dict__)
