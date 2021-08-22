@@ -181,8 +181,7 @@ def make_env_all_params(rank, add_monitor, args):
         # Path(dataPath).mkdir(parents=True, exist_ok=True)
         # env = EnvMonitor(env, dataPath)
         
-        env = VideoMonitor(env, "./disagreeVideo/VID" + time)
-        # , video_callable = lambda episode_id: episode_id%1000000)
+        env = VideoMonitor(env, "./disagreeVideo/VID" + time, video_callable = lambda episode_id: episode_id%10 == 0)
         env = ImgObsWrapper(RGBImgPartialObsWrapper(env))
     
     # if add_monitor:
