@@ -162,6 +162,8 @@ class Rollout(object):
     def update_info(self):
 
         all_ep_infos = MPI.COMM_WORLD.allgather(self.ep_infos_new)
+        print("----------------------EP INFOS---------------------------")
+        print(all_ep_infos)
         all_ep_infos = sorted(sum(all_ep_infos, []), key=lambda x: x[0])
         if all_ep_infos:
             print("----------------------THEY EXIST---------------------------")
