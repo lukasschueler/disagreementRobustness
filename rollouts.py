@@ -75,7 +75,7 @@ class Rollout(object):
             # MINE  
             # var_rew = np.mean(var_output)
             wandb.log({
-                "Intri Reward": var_rew,
+                "Intri Reward": np.mean(var_rew),
             })
         else:
             for dynamics in self.dynamics_list:
@@ -87,7 +87,7 @@ class Rollout(object):
             # TODO: Check whether output with this axis-parameter makes sense
             var_rew = np.var(int_rew, axis=0)
             wandb.log({
-                "Intrinsic Reward": var_rew,
+                "Intrinsic Reward": np.mean(var_rew),
             })
 
         self.buf_rews[:] = self.reward_fun(int_rew=var_rew, ext_rew=self.buf_ext_rews)
