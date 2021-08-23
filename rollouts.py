@@ -111,8 +111,7 @@ class Rollout(object):
                 epinfo.update(mzepinfo)
                 epinfo.update(retroepinfo)
                 if epinfo:
-                    print("--------------ENTERING EPINFO---------------")
-                    sys.exit("YESS")
+
                     if "n_states_visited" in info:
                         epinfo["n_states_visited"] = info["n_states_visited"]
                         epinfo["states_visited"] = info["states_visited"]
@@ -170,8 +169,7 @@ class Rollout(object):
 
         all_ep_infos = sorted(sum(all_ep_infos, []), key=lambda x: x[0])
         if all_ep_infos:
-            print("----------------------THEY EXIST---------------------------")
-            sys.exit("REicht")
+
             all_ep_infos = [i_[1] for i_ in all_ep_infos]  # remove the step_count
             keys_ = all_ep_infos[0].keys()
             all_ep_infos = {k: [i[k] for i in all_ep_infos] for k in keys_}
