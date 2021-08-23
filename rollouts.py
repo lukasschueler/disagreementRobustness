@@ -111,6 +111,8 @@ class Rollout(object):
                 epinfo.update(mzepinfo)
                 epinfo.update(retroepinfo)
                 if epinfo:
+                    print("--------------ENTERING EPINFO---------------")
+                    sys.exit("YESS")
                     if "n_states_visited" in info:
                         epinfo["n_states_visited"] = info["n_states_visited"]
                         epinfo["states_visited"] = info["states_visited"]
@@ -164,6 +166,8 @@ class Rollout(object):
         all_ep_infos = MPI.COMM_WORLD.allgather(self.ep_infos_new)
         print("----------------------EP INFOS---------------------------")
         print(all_ep_infos)
+        sys.exit("REicht")
+
         all_ep_infos = sorted(sum(all_ep_infos, []), key=lambda x: x[0])
         if all_ep_infos:
             print("----------------------THEY EXIST---------------------------")
