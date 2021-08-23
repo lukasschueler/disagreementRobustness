@@ -176,10 +176,10 @@ def make_env_all_params(rank, add_monitor, args):
         env = gym.make(args['env'])
         
         time = datetime.datetime.now().strftime("-%Y-%m-%d-%H-%M-%S-%f")
-        # from pathlib import Path
-        # dataPath = "./disagreeData/ENV" + time
-        # Path(dataPath).mkdir(parents=True, exist_ok=True)
-        # env = EnvMonitor(env, dataPath)
+        from pathlib import Path
+        dataPath = "./disagreeData/ENV" + time
+        Path(dataPath).mkdir(parents=True, exist_ok=True)
+        env = EnvMonitor(env, dataPath)
         
         env = VideoMonitor(env, "./disagreeVideo/VID" + time, video_callable = lambda episode_id: episode_id%10 == 0)
         env = ImgObsWrapper(RGBImgPartialObsWrapper(env))
