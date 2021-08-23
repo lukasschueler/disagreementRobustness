@@ -84,7 +84,9 @@ class Rollout(object):
 
             # calculate the variance of the rew
             # TODO: Check whether output with this axis-parameter makes sense
-            var_rew = np.var(int_rew, axis=0)
+            var_rew = np.mean(int_rew, axis=0)
+            var_rew = np.mean(var_rew, axis=-1)
+
             
             wandb.log({
                 "Intrinsic Reward": np.mean(int_rew),
