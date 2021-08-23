@@ -5,6 +5,7 @@ from mpi4py import MPI
 
 from recorder import Recorder
 import wandb
+import sys
 
 class Rollout(object):
     def __init__(self, ob_space, ac_space, nenvs, nsteps_per_seg, nsegs_per_env, nlumps, envs, policy,
@@ -67,8 +68,14 @@ class Rollout(object):
 
             # cal variance along first dimension .. [n_dyna, n_env, n_step, feature_size]
             # --> [n_env, n_step,feature_size]
+            print("---------------------------NETWORK LOSS OUTPUT---------------------------------")
+            print(net_output[0])
+            
             var_output = np.var(net_output, axis=0)
+            print("-----------------------------VARTIANCE CALCULATED--------------------------------")
+            print(var_output)
 
+            sys.exit("should be enough")
             # cal reward by mean along second dimension .. [n_env, n_step, feature_size] --> [n_env, n_step]
             #ORIGINALE
             var_rew = np.mean(var_output, axis=-1)
