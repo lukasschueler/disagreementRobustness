@@ -68,19 +68,11 @@ class Rollout(object):
 
             # cal variance along first dimension .. [n_dyna, n_env, n_step, feature_size]
             # --> [n_env, n_step,feature_size]
-            print("---------------------------NETWORK LOSS OUTPUT---------------------------------")
-            print(type(net_output[0]))
-            
-            var_output = np.var(net_output, axis=0)
-            print("-----------------------------VARTIANCE CALCULATED--------------------------------")
-            print(type(var_output))
 
-            sys.exit("should be enough")
+            var_output = np.var(net_output, axis=0)
             # cal reward by mean along second dimension .. [n_env, n_step, feature_size] --> [n_env, n_step]
-            #ORIGINALE
             var_rew = np.mean(var_output, axis=-1)
-            # MINE  
-            # var_rew = np.mean(var_output)
+            
             wandb.log({
                 "Intri Reward": np.mean(var_rew),
             })
@@ -93,8 +85,9 @@ class Rollout(object):
             # calculate the variance of the rew
             # TODO: Check whether output with this axis-parameter makes sense
             var_rew = np.var(int_rew, axis=0)
+            
             wandb.log({
-                "Intrinsic Reward": np.mean(var_rew),
+                "Intrinsic Reward": np.mean(int_rew),
             })
 
         self.buf_rews[:] = self.reward_fun(int_rew=var_rew, ext_rew=self.buf_ext_rews)
