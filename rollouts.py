@@ -70,9 +70,12 @@ class Rollout(object):
             var_output = np.var(net_output, axis=0)
 
             # cal reward by mean along second dimension .. [n_env, n_step, feature_size] --> [n_env, n_step]
-            var_rew = np.mean(var_output)
+            #ORIGINALE
+            var_rew = np.mean(var_output, axis=-1)
+            # MINE  
+            # var_rew = np.mean(var_output)
             wandb.log({
-                "Intrinsic Reward": var_rew,
+                "Intri Reward": var_rew,
             })
         else:
             for dynamics in self.dynamics_list:
@@ -81,10 +84,10 @@ class Rollout(object):
                                                        acs=self.buf_acs))
 
             # calculate the variance of the rew
+            # TODO: Check whether output with this axis-parameter makes sense
             var_rew = np.var(int_rew, axis=0)
-            # TODO: Check whether output with this axis-aparamter makes sense
             wandb.log({
-                "Intrinsic Reward": np.mean(var_rew),
+                "Intrinsic Reward": var_rew,
                 })
 
         self.buf_rews[:] = self.reward_fun(int_rew=var_rew, ext_rew=self.buf_ext_rews)

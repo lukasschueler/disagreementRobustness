@@ -266,13 +266,14 @@ if __name__ == '__main__':
     parser.add_argument('--feat_learning', type=str, default="none",
                         choices=["none", "idf", "vaesph", "vaenonsph", "pix2pix"])
     
-    parser.add_argument('--num_dynamics', type=int, default=5)
+    parser.add_argument('--num_dynamics', type=int, default=1)
     parser.add_argument('--var_output', action='store_true', default=True)
 
 
     args = parser.parse_args()
     
-    wandb.init(project="thesis", group = "Exploration_by_Disagreement", entity = "lukischueler", name ="FeatureExtractor: none", config = args, monitor_gym = True)
+    wandb.init(project="thesis", group = "Exploration_by_Disagreement", entity = "lukischueler", name ="Num:1, Output:True", config = args)
+            #    , monitor_gym = True)
     
 
     start_experiment(**args.__dict__)
