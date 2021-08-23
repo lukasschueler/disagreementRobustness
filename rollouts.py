@@ -69,11 +69,11 @@ class Rollout(object):
             # cal variance along first dimension .. [n_dyna, n_env, n_step, feature_size]
             # --> [n_env, n_step,feature_size]
             print("---------------------------NETWORK LOSS OUTPUT---------------------------------")
-            print(net_output[0])
+            print(np.shape(net_output[0]))
             
             var_output = np.var(net_output, axis=0)
             print("-----------------------------VARTIANCE CALCULATED--------------------------------")
-            print(var_output)
+            print(np.shape(var_output))
 
             sys.exit("should be enough")
             # cal reward by mean along second dimension .. [n_env, n_step, feature_size] --> [n_env, n_step]
