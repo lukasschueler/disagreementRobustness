@@ -160,11 +160,12 @@ class Rollout(object):
                     # self.buf_rews[sli, t] = self.reward_fun(ext_rew=ext_rews, int_rew=int_rew)
 
     def update_info(self):
-        print("----------------------ENTERED UPDATE SECTION---------------------------")
-        sys.exit("REicht")
+
         all_ep_infos = MPI.COMM_WORLD.allgather(self.ep_infos_new)
         all_ep_infos = sorted(sum(all_ep_infos, []), key=lambda x: x[0])
         if all_ep_infos:
+            print("----------------------THEY EXIST---------------------------")
+            sys.exit("REicht")
             all_ep_infos = [i_[1] for i_ in all_ep_infos]  # remove the step_count
             keys_ = all_ep_infos[0].keys()
             all_ep_infos = {k: [i[k] for i in all_ep_infos] for k in keys_}
