@@ -266,7 +266,7 @@ if __name__ == '__main__':
     parser.add_argument('--ext_coeff', type=float, default=1.)
     parser.add_argument('--int_coeff', type=float, default=1.)
     parser.add_argument('--layernorm', type=int, default=0)
-    parser.add_argument('--feat_learning', type=str, default="vaesph",
+    parser.add_argument('--feat_learning', type=str, default="pix2pix",
                         choices=["none", "idf", "vaesph", "vaenonsph", "pix2pix"])
     
     parser.add_argument('--num_dynamics', type=int, default=5)
