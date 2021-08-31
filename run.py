@@ -266,7 +266,7 @@ if __name__ == '__main__':
     parser.add_argument('--ext_coeff', type=float, default=1.)
     parser.add_argument('--int_coeff', type=float, default=1.)
     parser.add_argument('--layernorm', type=int, default=0)
-    parser.add_argument('--feat_learning', type=str, default="idf",
+    parser.add_argument('--feat_learning', type=str, default="vaesph",
                         choices=["none", "idf", "vaesph", "vaenonsph", "pix2pix"])
     
     parser.add_argument('--num_dynamics', type=int, default=5)
@@ -276,7 +276,7 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
     
-    wandb.init(project="thesis", group = "Exploration_by_Disagreement", entity = "lukischueler", name ="Number threads: 32", config = args)
+    wandb.init(project="thesis", group = "Exploration_by_Disagreement", entity = "lukischueler", name ="test Extr", config = args)
             #    , monitor_gym = True)
     
 
