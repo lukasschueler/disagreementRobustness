@@ -234,7 +234,7 @@ def add_optimization_params(parser):
 def add_rollout_params(parser):
     parser.add_argument('--nsteps_per_seg', type=int, default=128)
     parser.add_argument('--nsegs_per_env', type=int, default=1)
-    parser.add_argument('--envs_per_process', type=int, default=16)
+    parser.add_argument('--envs_per_process', type=int, default=8)
     parser.add_argument('--nlumps', type=int, default=1)
 
 
@@ -276,7 +276,7 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
     
-    wandb.init(project="thesis", group = "Exploration_by_Disagreement", entity = "lukischueler", name ="Number threads: 16", config = args)
+    wandb.init(project="thesis", group = "Exploration_by_Disagreement", entity = "lukischueler", name ="Number threads: 8", config = args)
             #    , monitor_gym = True)
     
 
