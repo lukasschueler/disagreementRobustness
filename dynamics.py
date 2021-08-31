@@ -110,7 +110,7 @@ class UNet(Dynamics):
         super(UNet, self).__init__(auxiliary_task=auxiliary_task,
                                    predict_from_pixels=predict_from_pixels,
                                    feat_dim=feat_dim,
-                                   scope=scope)
+                                   scope=scope, var_output = True)
 
     def get_features(self, x, reuse):
         raise NotImplementedError
