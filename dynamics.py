@@ -104,7 +104,7 @@ class Dynamics(object):
 
 
 class UNet(Dynamics):
-    def __init__(self, auxiliary_task, predict_from_pixels, feat_dim=None, scope='pixel_dynamics'):
+    def __init__(self, auxiliary_task, predict_from_pixels, feat_dim=None, scope='pixel_dynamics', var_output = True):
         assert isinstance(auxiliary_task, JustPixels)
         assert not predict_from_pixels, "predict from pixels must be False, it's set up to predict from features that are normalized pixels."
         super(UNet, self).__init__(auxiliary_task=auxiliary_task,
