@@ -228,7 +228,7 @@ def add_optimization_params(parser):
     parser.add_argument('--lr', type=float, default=0.0001)
     parser.add_argument('--ent_coeff', type=float, default=0.001)
     parser.add_argument('--nepochs', type=int, default=4)
-    parser.add_argument('--num_timesteps', type=int, default=1000)
+    parser.add_argument('--num_timesteps', type=int, default=1000000)
 
 
 def add_rollout_params(parser):
