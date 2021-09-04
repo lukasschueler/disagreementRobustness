@@ -256,6 +256,7 @@ class Rollout(object):
             all_ep_infos = [i_[1] for i_ in all_ep_infos]  # remove the step_count
             keys_ = all_ep_infos[0].keys()
             all_ep_infos = {k: [i[k] for i in all_ep_infos] for k in keys_}
+            print("TRUEEEEEEEEEEEEEEEEEE")
             
         ext_rew = all_ep_infos["r"]
         episode_length = all_ep_infos["l"]
