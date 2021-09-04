@@ -77,6 +77,10 @@ class Rollout(object):
             
             # cal reward by mean along second dimension .. [n_env, n_step, feature_size] --> [n_env, n_step]
             var_rew = np.mean(var_output, axis=-1)
+            print("----------------SHAPE OF INTRINSIC REWARDS--------------------")
+            print(np.shape(var_rew))
+            # sys.exit("pass")
+
             
         else:
             for dynamics in self.dynamics_list:
@@ -88,11 +92,12 @@ class Rollout(object):
             # TODO: Check whether output with this axis-parameter makes sense
             var_rew = np.mean(int_rew, axis=0)
             var_rew = np.mean(var_rew, axis=-1)
-            print("----------------SHAPE OF INTZRI9NSIC REWARDS--------------------")
+            print("----------------SHAPE OF INTRINSIC REWARDS--------------------")
             print(np.shape(var_rew))
             sys.exit("pass")
 
-        self.loggingData(self, var_rew)
+
+        self.loggingData(var_rew)
         
         self.buf_rews[:] = self.reward_fun(int_rew=var_rew, ext_rew=self.buf_ext_rews)
 
