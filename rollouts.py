@@ -56,6 +56,7 @@ class Rollout(object):
 
     def collect_rollout(self):
         self.ep_infos_new = []
+        self.intrinsic_rews_new = None
         for t in range(self.nsteps):
             self.rollout_step()
         self.calculate_reward()
@@ -97,7 +98,7 @@ class Rollout(object):
             sys.exit("pass")
 
 
-        self.loggingData(var_rew)
+        self.intrinsic_rews_new = var_rew
         
         self.buf_rews[:] = self.reward_fun(int_rew=var_rew, ext_rew=self.buf_ext_rews)
 
@@ -180,6 +181,8 @@ class Rollout(object):
             keys_ = all_ep_infos[0].keys()
             all_ep_infos = {k: [i[k] for i in all_ep_infos] for k in keys_}
 
+            self.loggingData(all_ep_infos)
+            
             self.statlists['Extrinsic Rewards in new Batch'].extend(all_ep_infos['r'])
             self.stats['eprew_recent'] = np.mean(all_ep_infos['r'])
             self.statlists['Length of Episode'].extend(all_ep_infos['l'])
@@ -249,19 +252,13 @@ class Rollout(object):
         return out
     
 
-    def loggingData(self, int_rew):
-        all_ep_infos = self.ep_infos_new
-        all_ep_infos = sorted(sum(all_ep_infos, []), key=lambda x: x[0])
-        if all_ep_infos:
-            all_ep_infos = [i_[1] for i_ in all_ep_infos]  # remove the step_count
-            keys_ = all_ep_infos[0].keys()
-            all_ep_infos = {k: [i[k] for i in all_ep_infos] for k in keys_}
-            print("TRUEEEEEEEEEEEEEEEEEE")
+    def loggingData(self, all_ep_infos):
+
             
         ext_rew = all_ep_infos["r"]
         episode_length = all_ep_infos["l"]
         
-        int_rew = np.asarray(int_rew)
+        int_rew = np.asarray(self.intrinsic_rews_new)
         int_rew = int_rew.flatten('F')
         
         for index in range(0, len(episode_length), self.nenvs):
