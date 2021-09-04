@@ -250,7 +250,7 @@ class Rollout(object):
     
 
     def loggingData(self, int_rew):
-        all_ep_infos = MPI.COMM_WORLD.allgather(self.ep_infos_new)
+        all_ep_infos = self.ep_infos_new
         all_ep_infos = sorted(sum(all_ep_infos, []), key=lambda x: x[0])
         if all_ep_infos:
             all_ep_infos = [i_[1] for i_ in all_ep_infos]  # remove the step_count
