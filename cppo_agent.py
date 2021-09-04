@@ -97,7 +97,9 @@ class PpoOptimizer(object):
         self.lump_stride = nenvs // self.nlump
         self.envs = [
             VecEnv(env_fns[l * self.lump_stride: (l + 1) * self.lump_stride], spaces=[self.ob_space, self.ac_space]) for
-            l in range(self.nlump)]
+            l in range(self.nlump)
+            ]
+        
         if self.unity:
             for i in tqdm(range(int(nenvs*2.5 + 10))):
                 time.sleep(1)
@@ -235,8 +237,8 @@ class PpoOptimizer(object):
             "Mean of Value-Prediction (Extrinsic)":self.rollout.buf_vpreds.mean(),
             "StD of Value-Prediction (Extrinsic)": self.rollout.buf_vpreds.std(),
             "Explained Variance (Extrinsic)": explained_variance(self.rollout.buf_vpreds.ravel(), self.buf_rets.ravel()),
-            "Total Reward (Mean)": np.mean(self.rollout.buf_rews),
-            "Recent Best Reward": self.rollout.best_ext_ret if self.rollout.best_ext_ret is not None else 0,
+            "Total Reward": np.mean(self.rollout.buf_rews),
+            # "Recent Best Reward": self.rollout.best_ext_ret if self.rollout.best_ext_ret is not None else 0,
             "Updates/Sec": 1. / (tnow - self.t_last_update),
             'Timesteps/Sec': MPI.COMM_WORLD.Get_size() * self.rollout.nsteps * self.nenvs / (tnow - self.t_last_update),
             "Time lapsed": tnow - self.t_start,
@@ -245,7 +247,7 @@ class PpoOptimizer(object):
             "Number of Updates": self.n_updates
         }
         myInfo.update(zip([ln for ln in self.loss_names], np.mean([mblossvals[0]], axis=0)))
-        wandb.log(myInfo)
+        wandb.log(myInfo, commit = True)
         
         
         info["Updates/Sec"] = 1. / (tnow - self.t_last_update)

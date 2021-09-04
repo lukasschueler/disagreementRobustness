@@ -49,6 +49,10 @@ class Rollout(object):
         self.all_scores = []
 
         self.step_count = 0
+        self.maxRewLogging = 0
+        self.frameCountLogging = 0
+        
+        
 
     def collect_rollout(self):
         self.ep_infos_new = []
@@ -56,6 +60,7 @@ class Rollout(object):
             self.rollout_step()
         self.calculate_reward()
         self.update_info()
+           
 
     def calculate_reward(self):
         int_rew = []
@@ -68,14 +73,11 @@ class Rollout(object):
 
             # cal variance along first dimension .. [n_dyna, n_env, n_step, feature_size]
             # --> [n_env, n_step,feature_size]
-
             var_output = np.var(net_output, axis=0)
+            
             # cal reward by mean along second dimension .. [n_env, n_step, feature_size] --> [n_env, n_step]
             var_rew = np.mean(var_output, axis=-1)
             
-            wandb.log({
-                "Intrinsic Reward": np.mean(var_rew),
-            })
         else:
             for dynamics in self.dynamics_list:
                 int_rew.append(dynamics.calculate_loss(ob=self.buf_obs,
@@ -86,12 +88,12 @@ class Rollout(object):
             # TODO: Check whether output with this axis-parameter makes sense
             var_rew = np.mean(int_rew, axis=0)
             var_rew = np.mean(var_rew, axis=-1)
+            print("----------------SHAPE OF INTZRI9NSIC REWARDS--------------------")
+            print(np.shape(var_rew))
+            sys.exit("pass")
 
-            
-            wandb.log({
-                "Intrinsic Reward": np.mean(int_rew),
-            })
-
+        self.loggingData(self, var_rew)
+        
         self.buf_rews[:] = self.reward_fun(int_rew=var_rew, ext_rew=self.buf_ext_rews)
 
     def rollout_step(self):
@@ -99,6 +101,7 @@ class Rollout(object):
         s = t % self.nsteps_per_seg
         for l in range(self.nlumps):
             obs, prevrews, news, infos = self.env_get(l)
+            
             # if t > 0:
             #     prev_feat = self.prev_feat[l]
             #     prev_acs = self.prev_acs[l]
@@ -133,6 +136,7 @@ class Rollout(object):
             self.buf_acs[sli, t] = acs
             if t > 0:
                 self.buf_ext_rews[sli, t - 1] = prevrews
+
             # if t > 0:
             #     dyn_logp = self.policy.call_reward(prev_feat, pol_feat, prev_acs)
             #
@@ -158,14 +162,11 @@ class Rollout(object):
                     # int_rew = dyn_logp
                     #
                     # self.int_rew[sli] = int_rew
-                    # self.buf_rews[sli, t] = self.reward_fun(ext_rew=ext_rews, int_rew=int_rew)
+                    # self.sw2[sli, t] = self.reward_fun(ext_rew=ext_rews, int_rew=int_rew)
 
     def update_info(self):
 
         all_ep_infos = MPI.COMM_WORLD.allgather(self.ep_infos_new)
-        # print("----------------------EP INFOS---------------------------")
-        # print(all_ep_infos)
-        # sys.exit("REicht")
 
         all_ep_infos = sorted(sum(all_ep_infos, []), key=lambda x: x[0])
         if all_ep_infos:
@@ -180,14 +181,11 @@ class Rollout(object):
             self.stats['epcount'] += len(all_ep_infos['l'])
             self.stats['tcount'] += sum(all_ep_infos['l'])
             
-            wandb.log({
-                "Number of Episodes": self.stats['epcount'],
-                "Number of Timesteps": self.stats['tcount'],
-            })
-            for reward in all_ep_infos['r']:
-                wandb.log({"Episode Reward": reward})
-            for length in all_ep_infos['l']:
-                wandb.log({"Length of Episode": length})
+
+            # for reward in all_ep_infos['r']:
+            #     wandb.log({"Episode Reward": reward})
+            # for length in all_ep_infos['l']:
+            #     wandb.log({"Length of Episode": length})
 
             if 'visited_rooms' in keys_:
                 # Montezuma specific logging.
@@ -244,3 +242,41 @@ class Rollout(object):
             else:
                 out = self.env_results[l]
         return out
+    
+
+    def loggingData(self, int_rew):
+        all_ep_infos = MPI.COMM_WORLD.allgather(self.ep_infos_new)
+        all_ep_infos = sorted(sum(all_ep_infos, []), key=lambda x: x[0])
+        if all_ep_infos:
+            all_ep_infos = [i_[1] for i_ in all_ep_infos]  # remove the step_count
+            keys_ = all_ep_infos[0].keys()
+            all_ep_infos = {k: [i[k] for i in all_ep_infos] for k in keys_}
+            
+        ext_rew = all_ep_infos["r"]
+        episode_length = all_ep_infos["l"]
+        
+        int_rew = np.asarray(int_rew)
+        int_rew = int_rew.flatten('F')
+        
+        for index in range(0, len(episode_length), self.nenvs):
+            
+            mean_extrinsic_reward = np.mean(ext_rew[index: index+self.nenvs])
+            mean_episode_length = np.mean(episode_length[index: index+self.nenvs])
+            mean_intrinsic_reward = np.mean(int_rew[index: index+self.nenvs])
+            
+            if mean_extrinsic_reward > self.maxRewLogging:
+                self.maxRewLogging = mean_extrinsic_reward
+                
+            wandb.log({
+                "Episode Reward": mean_extrinsic_reward,
+                "Intrinsic Reward": mean_intrinsic_reward,
+                "Episode Length" : mean_episode_length,
+                "Recent Best Reward": self.maxRewLogging,
+                "Frames": self.frameCountLogging + 1
+            }, commit = False)
+            
+            self.frameCountLogging += 1
+            
+            
+        
+    

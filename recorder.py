@@ -3,8 +3,6 @@ import pickle
 
 from baselines import logger
 from mpi4py import MPI
-import wandb
-
 
 class Recorder(object):
     def __init__(self, nenvs, nlumps):
