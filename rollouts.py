@@ -112,6 +112,8 @@ class Rollout(object):
             # TODO: I know this is wrong, but:
             # Never change a running system
             "Number of Updates": self.numberOfUpdates,
+            "Updates": self.numberOfUpdates,
+
             # "Number of Episodes": self.loggNumberEpisodes
         })
             
