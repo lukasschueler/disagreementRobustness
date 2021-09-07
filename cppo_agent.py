@@ -205,6 +205,7 @@ class PpoOptimizer(object):
         ])
         mblossvals = []
 
+        # TODO: Is here trained multiple times?
         for _ in range(self.nepochs):
             np.random.shuffle(envinds)
             for start in range(0, self.nenvs * self.nsegs_per_env, envsperbatch):
@@ -244,18 +245,18 @@ class PpoOptimizer(object):
             "Time lapsed": tnow - self.t_start,
             "Rank of Process": MPI.COMM_WORLD.Get_rank(),
             "Number of Processes": MPI.COMM_WORLD.Get_size(),
-            "Number of Updates": self.n_updates
+            "Number of Updates": self.n_updates,
         }
         myInfo.update(zip([ln for ln in self.loss_names], np.mean([mblossvals[0]], axis=0)))
-        wandb.log(myInfo, commit = True)
+        
+        wandb.log(myInfo, commit = False)
+        
         
         
         info["Updates/Sec"] = 1. / (tnow - self.t_last_update)
         info['Timesteps/Sec'] = MPI.COMM_WORLD.Get_size() * self.rollout.nsteps * self.nenvs / (tnow - self.t_last_update)
         info["Time lapsed"] = tnow - self.t_start
         self.t_last_update = tnow
-        
-        
         
         return info
 

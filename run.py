@@ -112,14 +112,15 @@ class Trainer(object):
             dynamics_list=self.dynamics_list
         )
 
-        self.agent.to_report['auxloss'] = tf.reduce_mean(self.feature_extractor.loss)
-        self.agent.total_loss += self.agent.to_report['auxloss']
+        self.agent.to_report['Feature Extractor Loss'] = tf.reduce_mean(self.feature_extractor.loss)
+        self.agent.total_loss += self.agent.to_report['Feature Extractor Loss']
 
-        self.agent.to_report['dyn_loss'] = tf.reduce_mean(self.dynamics_list[0].partial_loss)
+        self.agent.to_report['State Predictor Loss'] = tf.reduce_mean(self.dynamics_list[0].partial_loss)
         for i in range(1, num_dyna):
-            self.agent.to_report['dyn_loss'] += tf.reduce_mean(self.dynamics_list[i].partial_loss)
+            self.agent.to_report['State Predictor Loss'] += tf.reduce_mean(self.dynamics_list[i].partial_loss)
 
-        self.agent.total_loss += self.agent.to_report['dyn_loss']
+        self.agent.total_loss += self.agent.to_report['State Predictor Loss']
+        
         self.agent.to_report['feat_var'] = tf.reduce_mean(tf.nn.moments(self.feature_extractor.features, [0, 1])[1])
 
     def _set_env_vars(self):
@@ -222,13 +223,18 @@ def add_environments_params(parser):
 def add_optimization_params(parser):
     parser.add_argument('--lambda', type=float, default=0.95)
     parser.add_argument('--gamma', type=float, default=0.99)
+    # TODO: Assimliate nminibatches with rnd
     parser.add_argument('--nminibatches', type=int, default=8)
     parser.add_argument('--norm_adv', type=int, default=1)
     parser.add_argument('--norm_rew', type=int, default=1)
     parser.add_argument('--lr', type=float, default=0.0001)
     parser.add_argument('--ent_coeff', type=float, default=0.001)
     parser.add_argument('--nepochs', type=int, default=4)
-    parser.add_argument('--num_timesteps', type=int, default=1000000)
+    
+    # Short runs  
+    parser.add_argument('--num_timesteps', type=int, default=1000064)
+    # Long runs  
+    # parser.add_argument('--num_timesteps', type=int, default=10000000)
 
 
 def add_rollout_params(parser):
@@ -279,5 +285,25 @@ if __name__ == '__main__':
     wandb.init(project="thesis", group = "Exploration_by_Disagreement", entity = "lukischueler", name ="Testing new Logging", config = args)
             #    , monitor_gym = True)
     
+    
+    # Define the custom x axis metric
+    wandb.define_metric("Number of Episodes")
+    wandb.define_metric("Frames seen")
+    wandb.define_metric("Number of Updates")
+
+    # Define which metrics to plot against that x-axis
+    wandb.define_metric("Episode Reward", step_metric='Number of Episodes')
+    wandb.define_metric("Length of Episode", step_metric='Number of Episodes')
+    wandb.define_metric("Recent Best Reward", step_metric='Number of Episodes')
+    
+    wandb.define_metric("Episode Reward", step_metric='Frames seen')
+    wandb.define_metric("Length of Episode", step_metric='Frames seen')
+    wandb.define_metric("Recent Best Reward", step_metric='Frames seen')
+    
+    wandb.define_metric("Intrinsic Reward (Batch)", step_metric='Frames seen')
+    wandb.define_metric("Extrinsic Reward (Batch)", step_metric='Frames seen')
+    
+    wandb.define_metric("Intrinsic Reward (Batch)", step_metric='Number of Updates')
+    wandb.define_metric("Extrinsic Reward (Batch)", step_metric='Number of Updates')
 
     start_experiment(**args.__dict__)
