@@ -9,6 +9,7 @@ from functools import partial
 
 import gym
 from gym.wrappers import Monitor as VideoMonitor
+# from gym.wrappers import FrameStack
 
 import gym_minigrid
 from gym_minigrid.wrappers import ImgObsWrapper, RGBImgObsWrapper, RGBImgPartialObsWrapper
@@ -175,19 +176,19 @@ def make_env_all_params(rank, add_monitor, args):
         
     elif args["env_kind"] == 'custom':
         env = gym.make(args['env'])
-        tile_size = args["tile_size"]
         
         time = datetime.datetime.now().strftime("-%Y-%m-%d-%H-%M-%S-%f")
         from pathlib import Path
         dataPath = "./disagreeData/ENV" + time
         Path(dataPath).mkdir(parents=True, exist_ok=True)
-        env = EnvMonitor(env, dataPath)
         
-        env = VideoMonitor(env, "./disagreeVideo/VID" + time, video_callable = lambda episode_id: episode_id%10 == 0)
+        # env = FrameStack(env, 4)
+        env = EnvMonitor(env, dataPath)
+        env = VideoMonitor(env, "./disagreeVideo/VID"+ args["exp_name"] + time, video_callable = lambda episode_id: episode_id % args['record_when'] == 0)
+        
         # Using this for the feature extractor testing
-        # env = ImgObsWrapper(RGBImgPartialObsWrapper(env, tile_size= tile_size))
-        env = ImgObsWrapper(RGBImgPartialObsWrapper(env))
-    
+        env = ImgObsWrapper(RGBImgPartialObsWrapper(env, tile_size = args["tile_size"]))
+            
     # if add_monitor:
     #     env = Monitor(env, osp.join(logger.get_dir(), '%.2i' % rank))
     return env
@@ -223,7 +224,6 @@ def add_environments_params(parser):
 def add_optimization_params(parser):
     parser.add_argument('--lambda', type=float, default=0.95)
     parser.add_argument('--gamma', type=float, default=0.99)
-    # TODO: Assimliate nminibatches with rnd
     parser.add_argument('--nminibatches', type=int, default=8)
     parser.add_argument('--norm_adv', type=int, default=1)
     parser.add_argument('--norm_rew', type=int, default=1)
@@ -231,10 +231,6 @@ def add_optimization_params(parser):
     parser.add_argument('--ent_coeff', type=float, default=0.001)
     parser.add_argument('--nepochs', type=int, default=4)
     
-    # Short runs  
-    parser.add_argument('--num_timesteps', type=int, default=1000064)
-    # Long runs  
-    # parser.add_argument('--num_timesteps', type=int, default=10000000)
 
 
 def add_rollout_params(parser):
@@ -264,26 +260,34 @@ if __name__ == '__main__':
     add_optimization_params(parser)
     add_rollout_params(parser)
 
-    parser.add_argument('--exp_name', type=str, default='')
     parser.add_argument('--expID', type=str, default='000')
     parser.add_argument('--seed', help='RNG seed', type=int, default=0)
     parser.add_argument('--dyn_from_pixels', type=int, default=0)
     parser.add_argument('--use_news', type=int, default=0)
-    parser.add_argument('--ext_coeff', type=float, default=1.)
-    parser.add_argument('--int_coeff', type=float, default=0.)
     parser.add_argument('--layernorm', type=int, default=0)
+    
     parser.add_argument('--feat_learning', type=str, default="idf",
                         choices=["none", "idf", "vaesph", "vaenonsph", "pix2pix"])
-    
     parser.add_argument('--num_dynamics', type=int, default=5)
     parser.add_argument('--var_output', action='store_true', default=True)
-    parser.add_argument('--tile_size', type=int, default=12)
+    
+    parser.add_argument('--exp_name', type=str, default='Just another test')
+    parser.add_argument('--ext_coeff', type=float, default=1.)
+    parser.add_argument('--int_coeff', type=float, default=0.)
+    parser.add_argument('--tile_size', type=int, default=12) # 8 for default, 12 for feature extractor testing
+    parser.add_argument('--record_when', type=int, default=400)
+    
+    # Short runs  
+    parser.add_argument('--num_timesteps', type=int, default=1000064)
+    # Middle runs
+    # parser.add_argument('--num_timesteps', type=int, default=2000000)
+    # Long runs  
+    # parser.add_argument('--num_timesteps', type=int, default=10000000)
 
 
     args = parser.parse_args()
     
-    wandb.init(project="thesis", group = "Exploration_by_Disagreement", entity = "lukischueler", name = args.exp_name, config = args)
-            #    , monitor_gym = True)
+    wandb.init(project="thesis", group = "Exploration_by_Disagreement", entity = "lukischueler", name = args.exp_name, config = args, monitor_gym = True)
     
     
     # Define the custom x axis metric

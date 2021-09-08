@@ -197,7 +197,8 @@ def unet(x, nl, feat_dim, cond, batchnorm=False):
     x = bn(tf.layers.conv2d_transpose(cond(x), 32, kernel_size=8, strides=(2, 2), activation=nl, padding='same'))
     assert x.get_shape().as_list()[1:3] == [32, 32]
     x += layers.pop()
-    x = tf.layers.conv2d_transpose(cond(x), 4, kernel_size=8, strides=(3, 3), activation=None, padding='same')
+    # Changed here channels from 4 to three
+    x = tf.layers.conv2d_transpose(cond(x), 3, kernel_size=8, strides=(3, 3), activation=None, padding='same')
     assert x.get_shape().as_list()[1:3] == [96, 96]
     x = x[:, 6:-6, 6:-6]
     assert x.get_shape().as_list()[1:3] == [84, 84]
