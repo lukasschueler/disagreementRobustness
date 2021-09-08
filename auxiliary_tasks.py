@@ -111,7 +111,7 @@ class VAE(FeatureExtractor):
             reconstruction_distribution = self.decoder(posterior_sample)
             norm_obs = self.add_noise_and_normalize(self.obs)
             reconstruction_likelihood = reconstruction_distribution.log_prob(norm_obs)
-            assert reconstruction_likelihood.get_shape().as_list()[2:] == [84, 84, 4]
+            assert reconstruction_likelihood.get_shape().as_list()[2:] == [84, 84, 3]
             reconstruction_likelihood = tf.reduce_sum(reconstruction_likelihood, [2, 3, 4])
 
             likelihood_lower_bound = reconstruction_likelihood - posterior_kl
@@ -129,7 +129,7 @@ class VAE(FeatureExtractor):
             sh = tf.shape(z)
             z = flatten_two_dims(z)
         with tf.variable_scope(self.scope + "decoder"):
-            z = small_deconvnet(z, nl=nl, ch=4 if self.spherical_obs else 8, positional_bias=True)
+            z = small_deconvnet(z, nl=nl, ch=3 if self.spherical_obs else 6, positional_bias=True)
             if z_has_timesteps:
                 z = unflatten_first_dim(z, sh)
             if self.spherical_obs:
