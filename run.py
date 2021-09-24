@@ -273,7 +273,7 @@ if __name__ == '__main__':
     
     parser.add_argument('--exp_name', type=str, default='Just another test')
     parser.add_argument('--ext_coeff', type=float, default=1.)
-    parser.add_argument('--int_coeff', type=float, default=0.)
+    parser.add_argument('--int_coeff', type=float, default=1.)
     parser.add_argument('--tile_size', type=int, default=12) # 8 for default, 12 for feature extractor testing
     parser.add_argument('--record_when', type=int, default=400)
     
@@ -287,7 +287,8 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
     
-    wandb.init(project="thesis", group = "Exploration_by_Disagreement", entity = "lukischueler", name = args.exp_name, config = args, monitor_gym = True)
+    wandb.init(project="thesis", group = "Exploration_by_Disagreement", entity = "lukischueler", name = args.exp_name, config = args)
+    # , monitor_gym = True)
     
     
     # Define the custom x axis metric
