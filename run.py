@@ -287,7 +287,8 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
     
-    wandb.init(project="thesis", group = "Exploration_by_Disagreement", entity = "lukischueler", name = args.exp_name, config = args, monitor_gym = True)
+    wandb.init(project="thesis", group = "Exploration_by_Disagreement", entity = "lukischueler", name = args.exp_name, config = args)
+            #    , monitor_gym = True)
     
     
     # Define the custom x axis metric
