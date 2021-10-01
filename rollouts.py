@@ -176,9 +176,7 @@ class Rollout(object):
             if self.recorder is not None:
                 self.recorder.record(timestep=self.step_count, lump=l, acs=acs, infos=infos, int_rew=self.int_rew[sli],
                                      ext_rew=prevrews, news=news)
-        # wandb.log({
-        #     "Number of Timesteps" : MPI.COMM_WORLD.Get_size() * self.step_count * self.nenvs
-        #         })
+
         self.step_count += 1
 
         if s == self.nsteps_per_seg - 1:
