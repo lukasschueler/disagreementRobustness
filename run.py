@@ -274,7 +274,7 @@ if __name__ == '__main__':
     parser.add_argument('--exp_name', type=str, default='Just another test')
     parser.add_argument('--ext_coeff', type=float, default=1.)
     parser.add_argument('--int_coeff', type=float, default=1.)
-    parser.add_argument('--tile_size', type=int, default=12) # 8 for default, 12 for feature extractor testing
+    parser.add_argument('--tile_size', type=int, default=8) # 8 for default, 12 for feature extractor testing
     parser.add_argument('--record_when', type=int, default=400)
     
     # Short runs  
@@ -288,22 +288,20 @@ if __name__ == '__main__':
     args = parser.parse_args()
     
     wandb.init(project="thesis", group = "Exploration_by_Disagreement", entity = "lukischueler", name = args.exp_name, config = args)
-<<<<<<< HEAD
     # , monitor_gym = True)
-=======
-            #    , monitor_gym = True)
->>>>>>> a36e6467d235f3dadcf73ee36875f17496086de4
     
     
     # Define the custom x axis metric
-    wandb.define_metric("Number of Episodes")
+    # wandb.define_metric("Number of Episodes")
     wandb.define_metric("Frames seen")
     wandb.define_metric("Number of Updates")
 
     # Define which metrics to plot against that x-axis
-    wandb.define_metric("Episode Reward", step_metric='Number of Episodes')
-    wandb.define_metric("Length of Episode", step_metric='Number of Episodes')
-    wandb.define_metric("Recent Best Reward", step_metric='Number of Episodes')
+    wandb.define_metric("Episode Reward", step_metric='Number of Updates')
+    wandb.define_metric("Length of Episode", step_metric='Number of Updates')
+    wandb.define_metric("Recent Best Reward", step_metric='Number of Updates')
+    wandb.define_metric("Intrinsic Reward (Batch)", step_metric='Number of Updates')
+    wandb.define_metric("Extrinsic Reward (Batch)", step_metric='Number of Updates')
     
     wandb.define_metric("Episode Reward", step_metric='Frames seen')
     wandb.define_metric("Length of Episode", step_metric='Frames seen')
@@ -312,7 +310,5 @@ if __name__ == '__main__':
     wandb.define_metric("Intrinsic Reward (Batch)", step_metric='Frames seen')
     wandb.define_metric("Extrinsic Reward (Batch)", step_metric='Frames seen')
     
-    wandb.define_metric("Intrinsic Reward (Batch)", step_metric='Number of Updates')
-    wandb.define_metric("Extrinsic Reward (Batch)", step_metric='Number of Updates')
 
     start_experiment(**args.__dict__)
