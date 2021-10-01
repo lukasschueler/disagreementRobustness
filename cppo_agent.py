@@ -180,6 +180,7 @@ class PpoOptimizer(object):
         if self.normadv:
             m, s = get_mean_and_std(self.buf_advs)
             self.buf_advs = (self.buf_advs - m) / (s + 1e-7)
+            
         envsperbatch = (self.nenvs * self.nsegs_per_env) // self.nminibatches
         envsperbatch = max(1, envsperbatch)
         envinds = np.arange(self.nenvs * self.nsegs_per_env)
@@ -221,7 +222,7 @@ class PpoOptimizer(object):
         
         info["Rank of Process"] = MPI.COMM_WORLD.Get_rank()
         info["Number of Processes"] = MPI.COMM_WORLD.Get_size()
-        self.n_updates += 1
+        self.n_updates += self.nepochs * self.nminibatches
         info["Number of Updates"] = self.n_updates
         info.update({dn: (np.mean(dvs) if len(dvs) > 0 else 0) for (dn, dvs) in self.rollout.statlists.items()})
         
