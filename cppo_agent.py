@@ -72,7 +72,7 @@ class PpoOptimizer(object):
             clipfrac = tf.reduce_mean(tf.to_float(tf.abs(pg_losses2 - pg_loss_surr) > 1e-6))
 
             self.total_loss = pg_loss + ent_loss + vf_loss
-            self.to_report = {'Total Loss': self.total_loss, 'Policy Gradient Loss': pg_loss, 'Value Function Loss': vf_loss, 'Entropy': entropy,
+            self.to_report = {'Total Loss': self.total_loss, 'Policy Gradient Loss': pg_loss, 'Value Function Loss': vf_loss, 'Entropy': entropy, 'Entropy Loss': ent_loss,
                               'approxkl': approxkl, 'clipfrac': clipfrac}
 
     def start_interaction(self, env_fns, dynamics_list, nlump=2):
