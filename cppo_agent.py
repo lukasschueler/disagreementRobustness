@@ -247,7 +247,7 @@ class PpoOptimizer(object):
             "Rank of Process": MPI.COMM_WORLD.Get_rank(),
             "Number of Processes": MPI.COMM_WORLD.Get_size(),
             "Number of Updates": self.n_updates,
-            "Updates": self.n_updates * self.nepochs,
+            # "Updates": self.n_updates * self.nepochs,
 
         }
         myInfo.update(zip([ln for ln in self.loss_names], np.mean([mblossvals[0]], axis=0)))

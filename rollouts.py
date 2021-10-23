@@ -111,8 +111,8 @@ class Rollout(object):
             "Frames seen": MPI.COMM_WORLD.Get_size() * self.step_count * self.nenvs,
             # TODO: I know this is wrong, but:
             # Never change a running system
-            "Number of Updates": self.numberOfUpdates,
-            "Updates": self.numberOfUpdates,
+            # "Number of Updates": self.numberOfUpdates,
+            # "Updates": self.numberOfUpdates,
 
             # "Number of Episodes": self.loggNumberEpisodes
         })

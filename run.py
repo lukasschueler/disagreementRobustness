@@ -274,7 +274,7 @@ if __name__ == '__main__':
     parser.add_argument('--use_news', type=int, default=0)
     parser.add_argument('--layernorm', type=int, default=0)
     
-    parser.add_argument('--feat_learning', type=str, default="idf",
+    parser.add_argument('--feat_learning', type=str, default="none",
                         choices=["none", "idf", "vaesph", "vaenonsph", "pix2pix"])
     parser.add_argument('--num_dynamics', type=int, default=1)
     parser.add_argument('--var_output', action='store_true', default=False)
@@ -292,7 +292,7 @@ if __name__ == '__main__':
 
     
     # Short runs  
-    parser.add_argument('--num_timesteps', type=int, default=1000064)
+    parser.add_argument('--num_timesteps', type=int, default=1000448)
     # Middle runs
     # parser.add_argument('--num_timesteps', type=int, default=2000000)
     # Long runs  
