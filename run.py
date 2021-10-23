@@ -27,10 +27,13 @@ from dynamics import Dynamics, UNet
 from utils import random_agent_ob_mean_std
 from wrappers import MontezumaInfoWrapper, make_mario_env, \
     make_multi_pong, AddRandomStateToInfo, MaxAndSkipEnv, ProcessFrame84, ExtraTimeLimit, \
-    make_unity_maze, StickyActionEnv
+    make_unity_maze, StickyActionEnv, StateCoverage
 
 import datetime
 import wandb
+from noisyObservationWrapper import MakeEnvDynamic
+from randomActionWrapper import RandomActionWrapper
+from stateCoverage import stateCoverage
 
 
 
@@ -185,10 +188,15 @@ def make_env_all_params(rank, add_monitor, args):
         # env = FrameStack(env, 4)
         env = EnvMonitor(env, dataPath)
         env = VideoMonitor(env, "./disagreeVideo/VID"+ args["exp_name"] + time, video_callable = lambda episode_id: episode_id % args['record_when'] == 0)
-        
-        # Using this for the feature extractor testing
         env = ImgObsWrapper(RGBImgPartialObsWrapper(env, tile_size = args["tile_size"]))
-            
+        
+        if args["random_actions"]:
+            env = RandomActionWrapper(env)        
+        if args["add_noise"]:
+            env = MakeEnvDynamic(env)        
+        if args["record_coverage"]:
+            env = stateCoverage(env, args["size"], args["record_when"])        
+
     # if add_monitor:
     #     env = Monitor(env, osp.join(logger.get_dir(), '%.2i' % rank))
     return env
@@ -268,14 +276,20 @@ if __name__ == '__main__':
     
     parser.add_argument('--feat_learning', type=str, default="none",
                         choices=["none", "idf", "vaesph", "vaenonsph", "pix2pix"])
-    parser.add_argument('--num_dynamics', type=int, default=5)
-    parser.add_argument('--var_output', action='store_true', default=True)
+    parser.add_argument('--num_dynamics', type=int, default=1)
+    parser.add_argument('--var_output', action='store_true', default=False)
     
     parser.add_argument('--exp_name', type=str, default='Just another test')
     parser.add_argument('--ext_coeff', type=float, default=1.)
     parser.add_argument('--int_coeff', type=float, default=1.)
     parser.add_argument('--tile_size', type=int, default=8) # 8 for default, 12 for feature extractor testing
     parser.add_argument('--record_when', type=int, default=400)
+    parser.add_argument('--size', type=int, default=8)
+    parser.add_argument('--random_actions', default=False)
+    parser.add_argument('--record_coverage', default=False)
+    parser.add_argument('--add_noise', default=False)
+    
+
     
     # Short runs  
     parser.add_argument('--num_timesteps', type=int, default=1000448)
@@ -287,8 +301,9 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
     
-    wandb.init(project="thesis", group = "Exploration_by_Disagreement", entity = "lukischueler", name = args.exp_name, config = args)
-    # , monitor_gym = True)
+    wandb.init(project="thesis", group = "Exploration_by_Curiosity", entity = "lukischueler", name = args.exp_name, config = args)
+            #    , monitor_gym = True)
+            #    , settings=wandb.Settings(start_method='fork'))
     
     
     # Define the custom x axis metric
