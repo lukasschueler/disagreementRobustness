@@ -277,7 +277,7 @@ if __name__ == '__main__':
     parser.add_argument('--feat_learning', type=str, default="none",
                         choices=["none", "idf", "vaesph", "vaenonsph", "pix2pix"])
     parser.add_argument('--num_dynamics', type=int, default=5)
-    parser.add_argument('--var_output', action='store_true', default=False)
+    parser.add_argument('--var_output', action='store_true', default=True)
     
     parser.add_argument('--exp_name', type=str, default='Just another test')
     parser.add_argument('--ext_coeff', type=float, default=1.)
