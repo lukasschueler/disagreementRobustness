@@ -27,7 +27,7 @@ from dynamics import Dynamics, UNet
 from utils import random_agent_ob_mean_std
 from wrappers import MontezumaInfoWrapper, make_mario_env, \
     make_multi_pong, AddRandomStateToInfo, MaxAndSkipEnv, ProcessFrame84, ExtraTimeLimit, \
-    make_unity_maze, StickyActionEnv, StateCoverage
+    make_unity_maze, StickyActionEnv
 
 import datetime
 import wandb
@@ -195,7 +195,7 @@ def make_env_all_params(rank, add_monitor, args):
         if args["add_noise"]:
             env = MakeEnvDynamic(env)        
         if args["record_coverage"]:
-            env = stateCoverage(env, args["size"], args["record_when"])        
+            env = stateCoverage(env, args["size"], args["record_when"], rank)        
 
     # if add_monitor:
     #     env = Monitor(env, osp.join(logger.get_dir(), '%.2i' % rank))
@@ -276,7 +276,7 @@ if __name__ == '__main__':
     
     parser.add_argument('--feat_learning', type=str, default="none",
                         choices=["none", "idf", "vaesph", "vaenonsph", "pix2pix"])
-    parser.add_argument('--num_dynamics', type=int, default=1)
+    parser.add_argument('--num_dynamics', type=int, default=5)
     parser.add_argument('--var_output', action='store_true', default=False)
     
     parser.add_argument('--exp_name', type=str, default='Just another test')
@@ -301,7 +301,7 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
     
-    wandb.init(project="thesis", group = "Exploration_by_Curiosity", entity = "lukischueler", name = args.exp_name, config = args)
+    wandb.init(project="thesis", group = "Exploration_by_Disagreement", entity = "lukischueler", name = args.exp_name, config = args)
             #    , monitor_gym = True)
             #    , settings=wandb.Settings(start_method='fork'))
     
