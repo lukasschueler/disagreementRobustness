@@ -305,6 +305,7 @@ if __name__ == '__main__':
             #    , monitor_gym = True)
             #    , settings=wandb.Settings(start_method='fork'))
     
+    wandb.config.update({"architecture": "disagree"})
     
     # Define the custom x axis metric
     # wandb.define_metric("Number of Episodes")
