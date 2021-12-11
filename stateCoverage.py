@@ -14,7 +14,8 @@ class stateCoverage(gym.core.Wrapper):
         
     def step(self, action):
         obs, reward, done, info = self.env.step(action)
-        self.numberTimesteps += 1
+        if self.rank == 0:
+            self.numberTimesteps += 1
 
         if action == 2:
             env = self.unwrapped
